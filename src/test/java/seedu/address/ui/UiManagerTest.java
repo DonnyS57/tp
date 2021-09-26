@@ -17,6 +17,7 @@ import seedu.address.logic.LogicManager;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
@@ -33,7 +34,7 @@ public class UiManagerTest {
 
     private UiManager uiManager;
     private Logic logic;
-    private Model model = new ModelManager();
+    private Model model;
 
     @BeforeEach
     public void setUp() {
@@ -41,7 +42,8 @@ public class UiManagerTest {
                 new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
         JsonUserPrefsStorage userPrefsStorage = new JsonUserPrefsStorage(temporaryFolder.resolve("userPrefs.json"));
         StorageManager storage = new StorageManager(addressBookStorage, userPrefsStorage);
-        logic = new LogicManager(model, storage);
+        this.model = new ModelManager(new AddressBook(), new UserPrefs(), storage);
+        logic = new LogicManager(model);
         uiManager = new UiManager(logic);
     }
 
@@ -188,7 +190,7 @@ public class UiManagerTest {
      */
     private void assertCommandFailure(String inputCommand, Class<? extends Throwable> expectedException,
                                       String expectedMessage) {
-        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs(), null);
         assertCommandFailure(inputCommand, expectedException, expectedMessage, expectedModel);
     }
 
